@@ -2,47 +2,51 @@ import streamlit as st
 import openai
 import os
 
-# Load your OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-st.set_page_config(page_title="Log Analyzer with LLM", layout="wide")
+# Title and description
 st.title("🔍 Log File Analyzer using OpenAI GPT")
+st.write("Upload your log file (e.g., .log or .txt) and let GPT analyze it.")
 
-uploaded_file = st.file_uploader("📁 Upload your log file", type=["log", "txt"])
+# File uploader
+uploaded_file = st.file_uploader("Upload your log file", type=["log", "txt"])
 
+# Process file
 if uploaded_file is not None:
     log_content = uploaded_file.read().decode("utf-8")
 
-    st.subheader("📄 Preview of Uploaded Log:")
-    st.code(log_content[:1000])  # show preview
-
-    if st.button("🧠 Analyze Logs"):
-        with st.spinner("Analyzing using LLM..."):
-            prompt = f"""
-You are a cybersecurity analyst AI. Analyze the following log data and summarize any anomalies, suspicious activities, or patterns:
-
-{log_content}
-
-Your response should include:
-1. A general summary.
-2. Any signs of DoS attacks or suspicious IP addresses.
-3. Any patterns that might need deeper investigation.
-4. Suggested next steps for the analyst.
-"""
-
+    with st.spinner("Analyzing log file with GPT..."):
+        # Ensure API key is in environment variable
+        # export OPENAI_API_KEY="your_key_here" . # This command should add in terminal to set API Key in your environment
+        openai.api_key = os.getenv("OPENAI_API_KEY")
+        if not openai.api_key:
+            st.error("❌ OpenAI API key not found. Please set it as an environment variable.")
+        else:
             try:
                 response = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
                     messages=[
-                        {"role": "system", "content": "You are a helpful assistant skilled in log analysis."},
-                        {"role": "user", "content": prompt}
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are an expert in log file analysis. "
+                                "You will receive raw log content and must extract key insights, security warnings, anomalies, and suggestions. "
+                                "Format your response clearly using markdown with sections: Summary, Issues Found, Recommendations."
+                            ),
+                        },
+                        {
+                            "role": "user",
+                            "content": f"Here is the log file content:\n\n{log_content[:4000]}"
+                        }
                     ],
-                    temperature=0.2,
-                    max_tokens=1000
+                    temperature=0.3
                 )
-                analysis = response["choices"][0]["message"]["content"]
-                st.subheader("✅ Analysis Result")
-                st.text_area("LLM Output", analysis, height=300)
+
+                result = response.choices[0].message.content
+                st.markdown("### ✅ Analysis Result")
+                st.markdown(result)
+
+                # Optional: Save to file
+                with open("output_analysis.md", "w") as f:
+                    f.write(result)
 
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"⚠️ An error occurred: {e}")
