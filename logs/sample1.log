@@ -1,0 +1,3 @@
+May 03 18:00:03 server sshd[1999]: Failed password for invalid user admin from 192.168.1.10 port 22 ssh2
+May 03 18:00:05 server sshd[1999]: Failed password for invalid user admin from 192.168.1.10 port 22 ssh2
+May 03 18:00:07 server sshd[1999]: Failed password for invalid user admin from 192.168.1.10 port 22 ssh2

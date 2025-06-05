@@ -1,0 +1,7 @@
+
+---
+
+### 2. **Prompt مبدئي – أضفه الآن داخل `prompts/summarize.txt`:**
+
+```txt
+You are a cybersecurity assistant. Analyze the following log file. Summarize the key events and highlight any suspicious patterns or anomalies in simple English.
