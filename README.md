@@ -1,4 +1,4 @@
-# 🧠 Log Insight AI
+# 🧠 Log Analyzer LLM
 
 > A lightweight AI-powered tool to extract insights from system log files using LLMs (Large Language Models).
 
